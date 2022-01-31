@@ -12,7 +12,7 @@ There are now two different copies of B.
 I will show you which instances are probably duplicates and which are okay. Check out this example: {{gtExample:SpInstanceDeDuplicator class>>#example}}
 "
 Class {
-	#name : #SpInstanceDeDuplicator,
+	#name : #DdInstanceDeDuplicator,
 	#superclass : #Object,
 	#instVars : [
 		'objects',
@@ -27,7 +27,7 @@ Class {
 }
 
 { #category : #examples }
-SpInstanceDeDuplicator class >> example [
+DdInstanceDeDuplicator class >> example [
 	<gtExample>
 	
 	| canon objs |
@@ -40,7 +40,7 @@ SpInstanceDeDuplicator class >> example [
 				add: 3@3;
 				yourself ]
 		when: [ 
-			(SpInstanceDeDuplicator forObjects: objs)
+			(DdInstanceDeDuplicator forObjects: objs)
 				canonInclusionTest: [ :e | canon identityIncludes: e ];
 				idBlock: [ :e | e printString ];
 				yourself ]
@@ -51,39 +51,39 @@ SpInstanceDeDuplicator class >> example [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator class >> forObjects: aCollection [ 
+DdInstanceDeDuplicator class >> forObjects: aCollection [ 
 	^ self new
 		objects: aCollection;
 		yourself
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> autoMerge [
+DdInstanceDeDuplicator >> autoMerge [
 	self selectMergable groups do: #merge
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> canonInclusionTest [
+DdInstanceDeDuplicator >> canonInclusionTest [
 
 	^ canonInclusionTest
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> canonInclusionTest: anObject [
+DdInstanceDeDuplicator >> canonInclusionTest: anObject [
 
 	canonInclusionTest := anObject
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> childrenFor: anObject [
+DdInstanceDeDuplicator >> childrenFor: anObject [
 
-	(anObject isKindOf: SpSuspectedDuplicateGroup) ifTrue: [ 
+	(anObject isKindOf: DdSuspectedDuplicateGroup) ifTrue: [ 
 		^ anObject instances ].
 	^ #()
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> copyForObjects: aCollection [
+DdInstanceDeDuplicator >> copyForObjects: aCollection [
 	^ (self class forObjects: aCollection)
 		idBlock: self idBlock;
 		canonInclusionTest: self canonInclusionTest;
@@ -94,7 +94,7 @@ SpInstanceDeDuplicator >> copyForObjects: aCollection [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> copySelect: aBlock [
+DdInstanceDeDuplicator >> copySelect: aBlock [
 
 	| selectedGroups objs |
 	selectedGroups := self groups select: aBlock.
@@ -103,7 +103,7 @@ SpInstanceDeDuplicator >> copySelect: aBlock [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> fieldConditions [
+DdInstanceDeDuplicator >> fieldConditions [
 
 	^ fieldConditions ifNil: [ 
 		{ 
@@ -112,13 +112,13 @@ SpInstanceDeDuplicator >> fieldConditions [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> fieldConditions: anObject [
+DdInstanceDeDuplicator >> fieldConditions: anObject [
 
 	fieldConditions := anObject
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> groupConditions [
+DdInstanceDeDuplicator >> groupConditions [
 
 	^ groupConditions ifNil: [ 
 		{ 
@@ -132,20 +132,20 @@ SpInstanceDeDuplicator >> groupConditions [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> groupConditions: anObject [
+DdInstanceDeDuplicator >> groupConditions: anObject [
 
 	groupConditions := anObject
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> groups [
+DdInstanceDeDuplicator >> groups [
 	| dict |
 	groups ifNotNil: [ ^ groups ].
 	dict := self objects groupedBy: self idBlock.
 	^ groups := OrderedCollection streamContents: [ :str |
 		dict keysAndValuesDo: [ :k :v |
 			| group |
-			group := SpSuspectedDuplicateGroup new
+			group := DdSuspectedDuplicateGroup new
 				client: self;
 				id: k;
 				instances: v;
@@ -154,7 +154,7 @@ SpInstanceDeDuplicator >> groups [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> gtViewTreeOn: aView [
+DdInstanceDeDuplicator >> gtViewTreeOn: aView [
 	<gtView>
 	^ aView columnedTree
 		title: 'Objects' translated;
@@ -172,48 +172,48 @@ SpInstanceDeDuplicator >> gtViewTreeOn: aView [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> idBlock [
+DdInstanceDeDuplicator >> idBlock [
 
 	^ idBlock
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> idBlock: anObject [
+DdInstanceDeDuplicator >> idBlock: anObject [
 
 	idBlock := anObject
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> includedClasses [
+DdInstanceDeDuplicator >> includedClasses [
 	^ self objects collect: #class as: Set
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> objects [
+DdInstanceDeDuplicator >> objects [
 
 	^ objects
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> objects: anObject [
+DdInstanceDeDuplicator >> objects: anObject [
 
 	objects := anObject
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> postMergeAction [
+DdInstanceDeDuplicator >> postMergeAction [
 
 	^ postMergeAction ifNil: [ postMergeAction := [ :grp | ] ]
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> postMergeAction: anObject [
+DdInstanceDeDuplicator >> postMergeAction: anObject [
 
 	postMergeAction := anObject
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> printOn: aStream [
+DdInstanceDeDuplicator >> printOn: aStream [
 
 	aStream
 		print: self groups size;
@@ -221,6 +221,35 @@ SpInstanceDeDuplicator >> printOn: aStream [
 ]
 
 { #category : #accessing }
-SpInstanceDeDuplicator >> reset [
+DdInstanceDeDuplicator >> reset [
 	groups := nil
+]
+
+{ #category : #accessing }
+DdInstanceDeDuplicator >> selectMergable [
+
+	^ self copySelect: #isMergable
+]
+
+{ #category : #accessing }
+DdInstanceDeDuplicator >> selectUnmergable [
+
+	^ self copySelect: [ :e | e isMergable not and: [ e isValid not ] ]
+]
+
+{ #category : #accessing }
+DdInstanceDeDuplicator >> selectValid [
+
+	^ self copySelect: #isValid
+]
+
+{ #category : #accessing }
+DdInstanceDeDuplicator >> statusIconFor: anObject [
+	
+	(anObject isKindOf: DdSuspectedDuplicateGroup) ifTrue: [ 
+		^ anObject statusIcon ].
+			
+	^ (self canonInclusionTest value: anObject)
+		ifTrue: [ BrGlamorousIcons greencircle ]
+		ifFalse: [ BrGlamorousIcons redcircle ].
 ]

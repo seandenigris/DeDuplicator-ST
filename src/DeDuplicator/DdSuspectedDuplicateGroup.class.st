@@ -1,5 +1,5 @@
 Class {
-	#name : #SpSuspectedDuplicateGroup,
+	#name : #DdSuspectedDuplicateGroup,
 	#superclass : #Object,
 	#traits : 'MATPropertyOwner',
 	#classTraits : 'MATPropertyOwner classTrait',
@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> addMergabilityConditionsTo: aDescription [
+DdSuspectedDuplicateGroup >> addMergabilityConditionsTo: aDescription [
 	
 	aDescription
 		addCondition: [ :col | col size > 1 ]
@@ -37,36 +37,36 @@ SpSuspectedDuplicateGroup >> addMergabilityConditionsTo: aDescription [
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> addValidityConditionsTo: aDescription [
+DdSuspectedDuplicateGroup >> addValidityConditionsTo: aDescription [
 	aDescription
 		addCondition: [ :col | col size = 1 ] labelled: 'Only one instance';
 		addCondition: [ :col | col allSatisfy: self canonInclusionTest ] labelled: 'Instance must be in canon'
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> canonInclusionTest [
+DdSuspectedDuplicateGroup >> canonInclusionTest [
 	^ self client canonInclusionTest
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> canonical [
+DdSuspectedDuplicateGroup >> canonical [
 	^ self instances detect: self canonInclusionTest ifNone: [ nil ]
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> client [
+DdSuspectedDuplicateGroup >> client [
 
 	^ client
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> client: anObject [
+DdSuspectedDuplicateGroup >> client: anObject [
 
 	client := anObject
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> failedMergeConditions [
+DdSuspectedDuplicateGroup >> failedMergeConditions [
 	
 	^ OrderedCollection streamContents: [ :str |
 		[ 
@@ -79,19 +79,19 @@ SpSuspectedDuplicateGroup >> failedMergeConditions [
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> fieldConditions [
+DdSuspectedDuplicateGroup >> fieldConditions [
 	
 	^ self client fieldConditions
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> groupConditions [
+DdSuspectedDuplicateGroup >> groupConditions [
 	
 	^ self client groupConditions
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> gtViewInstancesOn: aView [
+DdSuspectedDuplicateGroup >> gtViewInstancesOn: aView [
 
 	<gtView>
 	^ aView columnedList
@@ -109,7 +109,7 @@ SpSuspectedDuplicateGroup >> gtViewInstancesOn: aView [
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> gtViewMergeVerificationOn: aView [
+DdSuspectedDuplicateGroup >> gtViewMergeVerificationOn: aView [
 	<gtView>
 	| items |
 	items := self failedMergeConditions ifEmpty: [ ^ aView empty ].
@@ -120,7 +120,7 @@ SpSuspectedDuplicateGroup >> gtViewMergeVerificationOn: aView [
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> gtViewPatchOn: aView [
+DdSuspectedDuplicateGroup >> gtViewPatchOn: aView [
 	<gtView>
 	self patch 
 		ifNotNil: [ :p |
@@ -133,37 +133,37 @@ SpSuspectedDuplicateGroup >> gtViewPatchOn: aView [
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> id [
+DdSuspectedDuplicateGroup >> id [
 
 	^ id
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> id: anObject [
+DdSuspectedDuplicateGroup >> id: anObject [
 
 	id := anObject
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> instances [
+DdSuspectedDuplicateGroup >> instances [
 
 	^ instances
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> instances: anObject [
+DdSuspectedDuplicateGroup >> instances: anObject [
 
 	instances := anObject
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> isMergable [
+DdSuspectedDuplicateGroup >> isMergable [
 	
 	^ self failedMergeConditions isEmpty
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> isValid [
+DdSuspectedDuplicateGroup >> isValid [
 	| desc |
 	desc := MAToManyRelationDescription new.
 	self addValidityConditionsTo: desc.
@@ -174,11 +174,44 @@ SpSuspectedDuplicateGroup >> isValid [
 ]
 
 { #category : #accessing }
-SpSuspectedDuplicateGroup >> merge [
+DdSuspectedDuplicateGroup >> merge [
 	| duplicates canonical |
 	self isMergable ifFalse: [ Warning signal: 'group not mergable!' ].
 	canonical := self canonical.
 	duplicates := self instances copyWithout: canonical.
 	duplicates do: [ :e | e becomeForward: canonical ].
 	self postMergeAction cull: self
+]
+
+{ #category : #accessing }
+DdSuspectedDuplicateGroup >> patch [
+	"Probably only makes sense if two instances"
+	| col |
+	col := self instances asOrderedCollection.
+	col size < 2 ifTrue: [ ^ nil ].
+	^ col first patchRelativeToBase: col second
+]
+
+{ #category : #accessing }
+DdSuspectedDuplicateGroup >> postMergeAction [
+	^ self client postMergeAction
+]
+
+{ #category : #accessing }
+DdSuspectedDuplicateGroup >> printOn: aStream [
+
+	aStream
+		nextPut: $(;
+		print: self instances size;
+		nextPutAll: ' objects ';
+		print: self id;
+		nextPut: $)
+]
+
+{ #category : #accessing }
+DdSuspectedDuplicateGroup >> statusIcon [
+
+	self isValid ifTrue: [ ^ BrGlamorousIcons greencircle ].
+	self isMergable ifTrue: [ ^ BrGlamorousIcons yellowcircle ].	
+	^ BrGlamorousIcons redcircle
 ]
