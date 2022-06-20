@@ -1,0 +1,9 @@
+SmalltalkCISpec {
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'DeDuplicator',
+      #directory : 'src',
+      #platforms : [ #pharo ]
+    }
+  ]
+}
