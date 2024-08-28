@@ -10,13 +10,13 @@ BaselineOfDeDuplicator >> baseline: spec [
 
 	spec for: #'common' do: [
 		spec 
-			baseline: 'Magritte' with: [ 
+			baseline: #'Magritte' with: [ 
 				spec repository: 'github://seandenigris/Magritte' ];
-			baseline: 'PharoEnhancements' with: [
+			baseline: #'PharoEnhancements' with: [
 				spec repository: 'github://seandenigris/Pharo-Enhancements' ].
 		spec
-			package: 'DeDuplicator' with: [
-				spec requires: #('Magritte' 'PharoEnhancements'). ] ].
+			package: #'DeDuplicator' with: [
+				spec requires: #(Magritte PharoEnhancements). ] ].
 ]
 
 { #category : #accessing }
